@@ -1,1 +1,22 @@
-
+docker ps
+docker images
+docker pull nginx
+docker run -d nginx
+docker ps -a
+docker run -d --name my-nginx nginx          #run container with name
+docker run -d --name webserver -p 8000:80 nginx   
+docker logs name/container id
+docker run -d --name my-nginx nginx       # 
+docker exec -it webserver sh
+ls 
+exit
+docker inspect container id             to inspect container
+docker stats
+docker stop container id
+docker start container id
+docker restart container id
+docker rm container id
+docker pause webserver
+docker unpause webserver
+docker rename webserver myserver
+docker rmi name of image
