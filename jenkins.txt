@@ -1,0 +1,32 @@
+Prerequisites: Java
+Jenkins requires Java to run. It is strongly recommended to install Java before Jenkins to avoid service startup failures .
+
+bash
+sudo apt update
+sudo apt install -y openjdk-21-jdk
+java -version
+
+🚀 Install Jenkins (LTS)
+These commands add the official Jenkins repository key and install the package .
+
+bash
+# Add the Jenkins repository key
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
+
+# Add the Jenkins repository
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+# Install Jenkins
+sudo apt update
+sudo apt install -y jenkins
+
+⚙️ Start and Verify the Service
+The installation usually starts Jenkins automatically. Use these commands to ensure it is running and enabled on boot .
+
+bash
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+sudo systemctl status jenkins
