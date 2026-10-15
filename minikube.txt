@@ -1,0 +1,33 @@
+🐳 Step 1: Install Docker (Container Driver)
+
+# Install Docker
+sudo apt update
+sudo apt install -y docker.io
+
+# Start and enable Docker
+sudo systemctl enable --now docker
+
+# Add your user to the docker group (so you can run docker without sudo)
+sudo usermod -aG docker $USER
+newgrp docker
+
+📥 Step 2: Install Minikube Binary
+curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
+
+sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+
+minikube version
+
+☸️ Step 3: Install kubectl
+
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install kubectl /usr/local/bin/kubectl
+rm kubectl
+
+# Verify
+kubectl version --client
+
+Step 4: Start Minikube Cluster
+Now, start your local Kubernetes cluster. Specifying the docker driver ensures it uses the Docker engine you installed :
+
+minikube start --driver=docker
