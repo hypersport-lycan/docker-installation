@@ -31,3 +31,15 @@ Step 4: Start Minikube Cluster
 Now, start your local Kubernetes cluster. Specifying the docker driver ensures it uses the Docker engine you installed :
 
 minikube start --driver=docker
+
+step 5 pull image
+docker pull philippaul/node-mysql-app:02
+
+load the Image into Minikube
+minikube image load philippaul/node-mysql-app:02
+
+Verify it loaded:
+minikube image ls | grep node-mysql-app
+
+
+
