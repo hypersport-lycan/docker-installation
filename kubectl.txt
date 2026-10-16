@@ -11,3 +11,5 @@ kubectl get deployment
 kubectl get svc
 
 kubectl port-forward --address 127.0.0.1 deployment/node-app 9090:3000
+
+http://127.0.0.1:9090
