@@ -1,0 +1,13 @@
+kubectl get nodes
+kubectl get pods
+
+kubectl apply -f mysql-secret.yml
+kubectl apply -f mysql-deployment.yml
+kubectl apply -f mysql-service.yml
+kubectl apply -f node-app-deployment.yaml
+kubectl apply -f node-app-service.yml
+
+kubectl get deployment
+kubectl get svc
+
+kubectl port-forward --address 127.0.0.1 deployment/node-app 9090:3000
