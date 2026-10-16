@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-app
+  template:
+    metadata:
+      labels:
+        app: node-app
+    spec:
+      containers:
+      - name: node-app
+        image: philippaul/node-mysql-app:02
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: DB_HOST
+          value: "localhost"
+        - name: DB_USER
+          value: "admin"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-credentials
+              key: DB_PASSWORD
+        - name: DB_NAME
+          value: "my_app_db"
+        ports:
+        - containerPort: 3000
