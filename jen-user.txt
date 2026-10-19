@@ -1,0 +1,40 @@
+Correct Approach: Embed Certificates into kubeconfig
+Execute the following on your WSL (as user suhas):
+
+bash
+# 1. Generate Base64 encoding for the three certificates (single line, no line breaks)
+CA=$(cat /home/suhas/.minikube/ca.crt | base64 -w 0)
+CERT=$(cat /home/suhas/.minikube/profiles/minikube/client.crt | base64 -w 0)
+KEY=$(cat /home/suhas/.minikube/profiles/minikube/client.key | base64 -w 0)
+
+# 2. Get Minikube's API Server address
+SERVER=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
+# Usually something like https://192.168.49.2:8443
+
+# 3. Generate a new kubeconfig with embedded certificate data
+cat > /tmp/kubeconfig-jenkins <<EOF
+apiVersion: v1
+kind: Config
+clusters:
+- cluster:
+    certificate-authority-data: ${CA}
+    server: ${SERVER}
+  name: minikube
+contexts:
+- context:
+    cluster: minikube
+    user: minikube
+  name: minikube
+current-context: minikube
+users:
+- name: minikube
+  user:
+    client-certificate-data: ${CERT}
+    client-key-data: ${KEY}
+EOF
+
+# 4. Place the new config in Jenkins's home directory and set permissions
+sudo mkdir -p /var/lib/jenkins/.kube
+sudo cp /tmp/kubeconfig-jenkins /var/lib/jenkins/.kube/config
+sudo chown -R jenkins:jenkins /var/lib/jenkins/.kube
+sudo chmod 600 /var/lib/jenkins/.kube/config
