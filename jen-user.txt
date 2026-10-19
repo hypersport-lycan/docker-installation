@@ -38,3 +38,4 @@ sudo mkdir -p /var/lib/jenkins/.kube
 sudo cp /tmp/kubeconfig-jenkins /var/lib/jenkins/.kube/config
 sudo chown -R jenkins:jenkins /var/lib/jenkins/.kube
 sudo chmod 600 /var/lib/jenkins/.kube/config
+sudo -u jenkins kubectl get nodes
