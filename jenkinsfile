@@ -1,0 +1,61 @@
+pipeline {
+    agent any
+    environment {
+        KUBECONFIG = "/var/lib/jenkins/.kube/config"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/hypersport-lycan/docker-installation.git'
+            }
+        }
+
+        stage('Deploy to Minikube') {
+            steps {
+                sh '''
+                    kubectl apply -f mysql-secret.yml
+                    kubectl apply -f mysql-deployment.yml
+                    kubectl apply -f mysql-service.yml
+                    kubectl apply -f node-app-deployment.yaml
+                    kubectl apply -f node-app-service.yml
+                '''
+            }
+        }
+
+        stage('Wait for Pods Ready') {
+            steps {
+                sh '''
+                    echo "Waiting for node-app and mysql pods to be Ready..."
+                    kubectl wait --for=condition=Ready pod -l app=mysql --timeout=180s
+                    kubectl wait --for=condition=Ready pod -l app=node-app --timeout=180s
+                '''
+            }
+        }
+
+        stage('Port Forward') {
+            steps {
+                sh '''
+                    # Kill any previous port-forward on 9090
+                    pkill -f "kubectl port-forward.*9090:3000" || true
+
+                    # Start port-forward in background, detach from Jenkins
+                    nohup kubectl port-forward --address 127.0.0.1 deployment/node-app 9090:3000 \
+                        > /tmp/port-forward.log 2>&1 &
+
+                    sleep 3
+                    echo "Port-forward started. Log:"
+                    cat /tmp/port-forward.log
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment successful! Access at http://127.0.0.1:9090'
+        }
+        failure {
+            echo 'Deployment failed. Check logs.'
+        }
+    }
+}
